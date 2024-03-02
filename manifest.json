@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "version": "1.0",
+  "name": "MyExtension",
+  "content_scripts": [
+    {
+      "matches": ["*://*.capitalcityonlineauction.com/Public"],
+      "js": ["main.js"]
+    }
+  ],
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "tabs",
+    "https://www.capitalcityonlineauction.com/Public"
+  ]
+}
