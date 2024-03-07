@@ -147,5 +147,5 @@ const setAuctionsState = () => {
 
 document.addEventListener("DOMContentLoaded", [
   setAuctionsState(),
-  console.log("extension loaded"),
+  console.info("extension loaded"),
 ]);

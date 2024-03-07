@@ -1,11 +1,15 @@
 {
   "manifest_version": 2,
   "version": "1.0",
-  "name": "MyExtension",
+  "name": "CapitalCityOnlineAuctionTracker",
   "content_scripts": [
     {
       "matches": ["*://*.capitalcityonlineauction.com/Public"],
       "js": ["main.js"]
+    },
+    {
+      "matches": ["*://*.capitalcityonlineauction.com/Public/Auction/AuctionItems*"],
+      "js": ["auction.js"]
     }
   ],
   "permissions": [
