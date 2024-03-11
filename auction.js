@@ -9,24 +9,11 @@ const awaitLoadingCompleted = () => {
     } else {
       console.info("done loading");
       setMarkers();
+      setPaginationListener();
     }
   };
 
   checkLoadingIconVisibility();
-};
-
-const itemIsNew = (info) => {
-  if (info.includes("item is new")) {
-    return true;
-  }
-  return false;
-};
-
-const itemStatuses = {
-  "item is new": true,
-  "This bulk item is sold as-is, and NO REFUNDS will be issued": true,
-  "Item Is In Retail Packaging. This Item Is Sold As-Is.": true,
-  "item is open box": true,
 };
 
 const getItemStatus = (info) => {
@@ -40,14 +27,13 @@ const getItemStatus = (info) => {
 };
 
 const appendItemMarker = (element, background, textContent) => {
-  var newItemMarker = document.createElement("div");
+  let newItemMarker = document.createElement("div");
+  const elementToInsertBefore = element.querySelector(".tooltip-demos");
+  const classes = ["btn", "pt-2", "text-center", "extension-marker"];
+
+  newItemMarker.classList.add(...classes, background);
   newItemMarker.textContent = textContent;
 
-   var classes = ["btn", "pt-2", "text-center"];
-   classes.push(background);
-
-  newItemMarker.classList.add(...classes);
-  const elementToInsertBefore = element.querySelector(".tooltip-demos");
   elementToInsertBefore.parentElement.insertBefore(
     newItemMarker,
     elementToInsertBefore
@@ -65,7 +51,8 @@ const setMarkers = () => {
       .innerHTML.toLowerCase();
 
     const itemStatus = getItemStatus(itemInformation);
-    var background = "";
+    let background = "",
+      textContent = "";
 
     switch (itemStatus) {
       case 1:
@@ -86,8 +73,20 @@ const setMarkers = () => {
   });
 };
 
-const setAuctionItemTooltips = () => {};
-document.addEventListener("DOMContentLoaded", [
-  // console.info("extension loaded"),
-  awaitLoadingCompleted(),
-]);
+const setPaginationListener = () => {
+  document.querySelectorAll(".page-item").forEach((element) => {
+    element.addEventListener("click", () => {
+      const hasMarkers =
+        document.getElementsByClassName("extension-marker").length != 0;
+
+      if (hasMarkers) {
+        setTimeout(() => {
+          setMarkers();
+          setPaginationListener();
+        }, 1000);
+      }
+    });
+  });
+};
+
+document.addEventListener("DOMContentLoaded", [awaitLoadingCompleted()]);
