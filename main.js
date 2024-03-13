@@ -52,9 +52,10 @@ const getAuctionIdFromAuction = (element) => {
 
 const updateStatusIndicatorAndDb = (element, auctionId) => {
   const req = window.indexedDB.open("capitalCityDb", 1);
+  debugger
 
   req.onsuccess = (event) => {
-    db = event.target.result;
+    const db = event.target.result;
 
     const transaction = db.transaction(["auctionStore"], "readwrite");
     const auctionStore = transaction.objectStore("auctionStore");
@@ -62,7 +63,7 @@ const updateStatusIndicatorAndDb = (element, auctionId) => {
     const getReq = auctionStore.get(auctionId);
 
     getReq.onsuccess = function (event) {
-      const entry = event.target.result;
+      let entry = event.target.result;
 
       if (entry) {
         entry.viewed = !entry.viewed;
@@ -91,8 +92,6 @@ const addAuctionViewStatusIndicators = (auctions) => {
       "text-center",
     ];
 
-    // Perform logic to set initial styles based on state
-
     statusIndicator.classList.add(...classes);
     statusIndicator.setAttribute("style", customStyles);
     statusIndicator.setAttribute("data-auctionId", auctionId);
@@ -111,7 +110,6 @@ const addAuctionViewStatusIndicators = (auctions) => {
       getReq.onsuccess = function (event) {
         const entry = event.target.result
         if (entry.viewed) {
-          // Everything starts as unviewed
           toggleViewedStyles(statusIndicator);
         }
       };
