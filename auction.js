@@ -73,25 +73,31 @@ const setMarkers = () => {
   });
 };
 
-// const toggleViewedStyles = () => {
-//   const indicator = document.querySelector("#viewedbutton");
-//   const viewedColor = "bg-primary";
-//   const notViewedColor = "bg-secondary";
+const toggleViewedStyles = (element) => {
+  const viewedColor = "bg-primary";
+  const notViewedColor = "bg-secondary";
 
-//   if (element.classList.contains(viewedColor)) {
-//     element.classList.remove(viewedColor);
-//     element.classList.add(notViewedColor);
-//     element.textContent = "Not Viewed";
-//   } else {
-//     element.classList.remove(notViewedColor);
-//     element.classList.add(viewedColor);
-//     element.textContent = "Viewed";
-//   }
-// };
+  if (element.classList.contains(viewedColor)) {
+    element.classList.remove(viewedColor);
+    element.classList.add(notViewedColor);
+    element.textContent = "Not Viewed";
+  } else {
+    element.classList.remove(notViewedColor);
+    element.classList.add(viewedColor);
+    element.textContent = "Viewed";
+  }
+};
+
+const getAuctionId = () => {
+  const params = new URLSearchParams(window.location.search);
+  return encodeURIComponent(params.get("AuctionId"))
+    .substring(0, 10)
+    .toLowerCase();
+};
 
 const updateDbEntryViewedStatus = () => {
-  const params = new URLSearchParams(window.location.search);
-  const auctionId = encodeURIComponent(params.get("AuctionId"));
+  const auctionId = getAuctionId();
+
   const req = window.indexedDB.open("capitalCityDb", 1);
 
   req.onsuccess = function (event) {
@@ -102,36 +108,33 @@ const updateDbEntryViewedStatus = () => {
 
     const getReq = auctionStore.get(auctionId);
 
-    getReq.onsuccess = () => {
-      // This is undefined and breaking any functionality
-      let entry = getReq.result;
-      debugger;
+    getReq.onsuccess = (event) => {
+      let entry = event.target.result;
+      if (entry) {
+        entry.viewed = !entry.viewed;
+        const updateReq = auctionStore.put(entry);
+
+        updateReq.onsuccess = function () {
+          console.log("Updated db key: " + auctionId);
+        };
+      }
     };
   };
 };
 
-// THIS WORKS IN MAIN.JS
-// auctionId
-// "K7binv0l%2fPOznSs6%2f29QAQ%3d%3d"
-// typeof auctionId
-// "string"
-
 const addViewedButton = () => {
   const parent = document.querySelector("#divAuctionTotalList");
-  const classes = ["text-center", "h2", "bg-primary"];
+  const classes = ["text-center", "h2", "bg-secondary"];
   const customStyles = `cursor: pointer`;
   let viewedBtn = document.createElement("div");
 
   viewedBtn.setAttribute("style", customStyles);
   viewedBtn.id = "viewedButton";
   viewedBtn.classList.add(...classes);
+  viewedBtn.innerText = "Not Viewed";
 
-  // Lets try reading from the db here
-
-  const params = new URLSearchParams(window.location.search);
-  const auctionId = encodeURIComponent(params.get("AuctionId"));
+  const auctionId = getAuctionId();
   const req = window.indexedDB.open("capitalCityDb", 1);
-  debugger
 
   req.onsuccess = function (event) {
     const db = event.target.result;
@@ -140,22 +143,19 @@ const addViewedButton = () => {
     const auctionStore = transaction.objectStore("auctionStore");
 
     const getReq = auctionStore.get(auctionId);
-    getReq.onsuccess = (event) => {
-      let entry = event.target.result;
-
-      if (entry) {
-        console.info("got state");
-      } else {
-        console.info("didnt get state");
+    getReq.onsuccess = function (event) {
+      const viewed = event.target.result.viewed;
+      if (viewed) {
+        toggleViewedStyles(viewedBtn);
+        viewedBtn.innerText = "Viewed";
       }
     };
   };
 
-  viewedBtn.textContent = "Viewed";
-
   parent.appendChild(viewedBtn);
   viewedBtn.addEventListener("click", function () {
     updateDbEntryViewedStatus();
+    toggleViewedStyles(viewedBtn);
   });
 };
 

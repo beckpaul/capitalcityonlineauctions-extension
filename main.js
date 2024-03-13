@@ -47,12 +47,13 @@ const getAuctionIdFromAuction = (element) => {
   return element
     .querySelector(".auctionGrid-para")
     .querySelector(".btn")
-    .attributes.onClick.value.match("AuctionId=([^&]+)")[1];
+    .attributes.onClick.value.match("AuctionId=([^&]+)")[1]
+    .substring(0, 10)
+    .toLowerCase();
 };
 
 const updateStatusIndicatorAndDb = (element, auctionId) => {
   const req = window.indexedDB.open("capitalCityDb", 1);
-  debugger
 
   req.onsuccess = (event) => {
     const db = event.target.result;
@@ -108,15 +109,17 @@ const addAuctionViewStatusIndicators = (auctions) => {
       const getReq = auctionStore.get(auctionId);
 
       getReq.onsuccess = function (event) {
-        const entry = event.target.result
+        const entry = event.target.result;
         if (entry.viewed) {
           toggleViewedStyles(statusIndicator);
         }
       };
 
       getReq.onerror = function (event) {
-        console.log("Auction state not found: might be a first time setup issue");
-      }
+        console.log(
+          "Auction state not found: might be a first time setup issue"
+        );
+      };
     };
 
     statusIndicator.addEventListener("click", function () {
