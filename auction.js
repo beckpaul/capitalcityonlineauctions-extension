@@ -22,6 +22,8 @@ const setMarkers = () => {
       return 1;
     } else if (info.includes("as-is")) {
       return 2;
+    } else if (info.includes("no obvious damage!")) {
+      return 3;
     } else {
       return 0;
     }
@@ -29,8 +31,16 @@ const setMarkers = () => {
 
   const appendItemMarker = (element, background, textContent) => {
     let newItemMarker = document.createElement("div");
-    const elementToInsertBefore = element.querySelector(".tooltip-demos");
-    const classes = ["btn", "pt-2", "text-center", "extension-marker"];
+    const elementToInsertBefore = element.querySelector(".carousel");
+    const classes = [
+      "card",
+      "rounded-pill",
+      "py-2",
+      "my-2",
+      "lead",
+      "text-center",
+      "extension-marker",
+    ];
 
     newItemMarker.classList.add(...classes, background);
     newItemMarker.textContent = textContent;
@@ -62,6 +72,10 @@ const setMarkers = () => {
       case 2:
         background = "bg-secondary";
         textContent = "As-Is";
+        break;
+      case 3:
+        background = "bg-warning";
+        textContent = "No Obvious Damage";
         break;
       default:
         background = "bg-danger";
@@ -124,10 +138,17 @@ const updateDbEntryViewedStatus = () => {
 
 const addViewedButton = () => {
   const parent = document.querySelector("#divAuctionTotalList");
-  const classes = ["text-center", "h2", "bg-secondary"];
+  const classes = [
+    "text-center",
+    "h2",
+    "py-2",
+    "my-2",
+    "bg-secondary",
+    "card",
+    "rounded-pill",
+  ];
   const customStyles = `cursor: pointer`;
   let viewedBtn = document.createElement("div");
-
   viewedBtn.setAttribute("style", customStyles);
   viewedBtn.id = "viewedButton";
   viewedBtn.classList.add(...classes);

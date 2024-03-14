@@ -81,8 +81,6 @@ const updateStatusIndicatorAndDb = (element, auctionId) => {
 
 const addAuctionViewStatusIndicators = (auctions) => {
   Array.from(auctions).forEach((element) => {
-    var statusIndicator = document.createElement("div");
-    statusIndicator.textContent = "Not Viewed";
     const auctionId = getAuctionIdFromAuction(element);
     const customStyles = `cursor: pointer`;
     const classes = [
@@ -91,8 +89,11 @@ const addAuctionViewStatusIndicators = (auctions) => {
       "mb-2",
       "text-primary",
       "text-center",
+      "h5",
     ];
 
+    let statusIndicator = document.createElement("div");
+    statusIndicator.textContent = "Not Viewed";
     statusIndicator.classList.add(...classes);
     statusIndicator.setAttribute("style", customStyles);
     statusIndicator.setAttribute("data-auctionId", auctionId);
